@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Tailwind v4 — config CSS-first.
+   Aquí podremos definir tokens del tema con @theme cuando lo necesitemos. */
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+}
