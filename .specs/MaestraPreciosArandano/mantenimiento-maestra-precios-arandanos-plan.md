@@ -4,10 +4,10 @@ spec_ref: mantenimiento-maestra-precios-arandanos-spec.md
 created: 2026-06-04
 status: in_progress
 total_tasks: 41
-completed_tasks: 13
-last_session: "2026-06-07 18:19"
-last_completed_task: T1.5
-next_pending_task: T2.1
+completed_tasks: 18
+last_session: "2026-06-07 18:59"
+last_completed_task: T2.5
+next_pending_task: T3.1
 sessions_count: 3
 paused_reason: ""
 ---
@@ -80,23 +80,23 @@ paused_reason: ""
   - Rollback: `git revert`
 
 ### 🌐 Bloque 2 — API Client (Fase 5 del roadmap)
-- [ ] **T2.1**: Cliente HTTP base (axios `baseURL`, interceptor `Authorization: Bearer`, desempaque `ApiResponse`) `🔴 P0`
+- [x] **T2.1**: Cliente HTTP base (axios `baseURL`, interceptor `Authorization: Bearer`, desempaque `ApiResponse`) `🔴 P0`
   - Archivo: `src/api/httpClient.ts`
   - Depende de: T1.1, T0.6
   - Rollback: `git revert`
-- [ ] **T2.2**: API de auth (`login` con password Base64, `refresh`) `🔴 P0`
+- [x] **T2.2**: API de auth (`login` con password Base64, `refresh`) `🔴 P0`
   - Archivo: `src/api/authApi.ts`
   - Depende de: T2.1, T1.2
   - Rollback: `git revert`
-- [ ] **T2.3**: API de período + empresa (`GetAll`) `🔴 P0`
+- [x] **T2.3**: API de período + empresa (`GetAll`) `🔴 P0`
   - Archivo: `src/api/periodoApi.ts`, `src/api/empresaApi.ts`
   - Depende de: T2.1, T1.4
   - Rollback: `git revert`
-- [ ] **T2.4**: API del módulo (CRUD `Pagination/Find/Insert/Update/Delete`) `🔴 P0`
+- [x] **T2.4**: API del módulo (CRUD `Pagination/Find/Insert/Update/Delete`) `🔴 P0`
   - Archivo: `src/api/maestraPrecioApi.ts`
   - Depende de: T2.1, T1.5
   - Rollback: `git revert`
-- [ ] **T2.5**: API de combos (vías, mercados, métodos, calibres, consignatarios, marcas, presentaciones) `🔴 P0`
+- [x] **T2.5**: API de combos (vías, mercados, métodos, calibres, consignatarios, marcas, presentaciones) `🔴 P0`
   - Archivo: `src/api/combosApi.ts`
   - Depende de: T2.1, T1.5
   - Rollback: `git revert`
@@ -257,3 +257,9 @@ paused_reason: ""
 | T1.3 | ✅ | 2026-06-05 08:28 | `src/types/pagination.ts`: `Paginacion<T>` (cantidadTotal/paginaActual/totalPaginas/registrosPorPagina/listado) + `PaginationParams` base (nroPage/numberOfEntries/textSearch) |
 | T1.4 | ✅ | 2026-06-07 18:16 | `src/types/periodo.ts`: `PeriodoOperacion` (id/descripcion/fechaInicio/fechaFin ISO string) + `PeriodoActivo` (subset {id,descripcion} para store global). `src/types/empresa.ts`: `Empresa` (growerID string + businessName); growerID es string por `EmpresaID:string` del DTO. `tsc --noEmit` OK |
 | T1.5 | ✅ | 2026-06-07 18:19 | `src/types/maestraPrecio.ts`: `MaestraPrecio` (entidad, mercadoID/calibreID string\|null, empresaID string), `MaestraPrecioInsertDto` (Omit id), `MaestraPrecioUpdateDto` (=entidad), `MaestraPreciosFilter` (extends PaginationParams + periodoID/empresaID), `ComboItem` ({value:string\|number,label}), `CULTIVO_ID='BLU'`. Flag: nombres del row no documentados, confirmar en T2.4. `tsc --noEmit` OK. **Bloque 1 cerrado** |
+| T2.1 | ✅ | 2026-06-07 18:37 | `src/api/httpClient.ts`: instancia axios (baseURL desde VITE_API_BASE_URL), interceptor request inyecta `Bearer` vía `setTokenGetter` (desacopla del store), interceptor response desempaca `ApiResponse<T>` (resuelve `data`, lanza `ApiError` en succeeded:false / error red). Clase `ApiError` (message/errors/status). Trabajado en **worktree** `feat/maestra-precios-arandanos`. `npm run build` OK |
+| T2.2 | ✅ | 2026-06-07 18:41 | `src/api/authApi.ts`: `login(userName,password)` codifica password con `btoa` (Base64) y POST `/autentificacion`; `refresh(refreshToken)` POST `/actualizar-token` body `{token}`. Ambas resuelven `AuthResponse` (interceptor desempaca). Base64 vive en la capa API, no en UI. `npm run build` OK |
+| T2.3 | ✅ | 2026-06-07 18:42 | `src/api/periodoApi.ts`: `getPeriodos()` GET `api/Administracion/PeriodoOperacion/GetAll` → `PeriodoOperacion[]`. `src/api/empresaApi.ts`: `getEmpresas()` GET `api/Administracion/Grower/GetAll` → `Empresa[]`. Combos globales. `npm run build` OK |
+| T1.5↺ | ✅ | 2026-06-07 18:54 | **Revisión de T1.5 con shape real (API test):** el row de `Pagination` trae IDs + nombres resueltos (via/mercado/consignatario/presentacion/calibre/marca/metodoCultivo) + auditoría + `cultivoID`. Refactor: `MaestraPrecioBase` (campos escribibles) → `MaestraPrecio extends Base` (+ nombres + audit + id), `InsertDto=Base`, `UpdateDto=Base&{id}`. Corrige el `Omit` previo que filtraba nombres/audit a los DTOs. Flag de T1.5 cerrado. |
+| T2.4 | ✅ | 2026-06-07 18:54 | `src/api/maestraPrecioApi.ts`: `getPagination(filter)` (mapea periodoID/empresaID→`PeriodoID`/`EmpresaID`) → `Paginacion<MaestraPrecio>`; `findById(id)`; `insert`/`update`/`remove` → `void` (UI invalida query y refresca). Base `api/MaestraPreciosArandano`. `npm run build` OK |
+| T2.5 | ✅ | 2026-06-07 18:59 | `src/api/combosApi.ts`: `getVias/getMercados/getMetodosCultivo` (globales), `getCalibres/getMarcas` (cultivoID=BLU), `getConsignatarios(empresaID)`, `getPresentaciones(empresaID)` (cropID=BLU + filtro client-side). Mapper `toComboItem` tolerante a casing (id/Id, nombre/Nombre) → `ComboItem`. Flags abiertos: casing real de combos y mecanismo de filtro de consignatarios (confirmar al cablear form). `npm run build` OK. **Bloque 2 cerrado** |

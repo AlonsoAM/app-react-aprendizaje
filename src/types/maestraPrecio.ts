@@ -4,8 +4,13 @@
  * Backend AGROCOM V3 (`api/MaestraPreciosArandano/*`). Toda respuesta viaja
  * dentro de `ApiResponse<T>`; los listados como `ApiResponse<Paginacion<MaestraPrecio>>`.
  *
- * ⚠️ Tipos sensibles (spec L339): `mercadoID` y `calibreID` son `string | null`
- * aunque sus combos devuelvan `{ Id, Nombre }` numérico → mapear a string al enviar.
+ * Shape confirmado contra la API test (2026-06-07): el row de `Pagination`
+ * trae los IDs escribibles + los nombres resueltos por el backend
+ * (via, mercado, …) + columnas de auditoría. Los DTOs de escritura solo
+ * envían los IDs (los nombres los calcula el servidor).
+ *
+ * ⚠️ Tipos sensibles (spec L339): `mercadoID` y `calibreID` son `string`
+ * (ej. `"AS "`, `"+18"`), no numéricos.
  */
 
 import type { PaginationParams } from './pagination';
@@ -14,14 +19,10 @@ import type { PaginationParams } from './pagination';
 export const CULTIVO_ID = 'BLU' as const;
 
 /**
- * Precio de la maestra tal como lo devuelve `Find` / `Pagination`.
- *
- * ⚠️ Pendiente confirmar en T2.4: el listado del mockup muestra nombres
- * (Vía, Mercado, Consignatario…), pero el contrato solo documenta los IDs.
- * Si `Pagination` devuelve campos de nombre, agregarlos aquí al cablearlo.
+ * Campos escribibles del precio — lo que viaja en `Insert`/`Update`.
+ * El backend resuelve los nombres y la auditoría a partir de estos IDs.
  */
-export interface MaestraPrecio {
-  id: number;
+export interface MaestraPrecioBase {
   viaID: number;
   mercadoID: string | null;
   consignatarioID: number;
@@ -33,13 +34,37 @@ export interface MaestraPrecio {
   periodoID: number;
   empresaID: string;
   estadoID: number;
+  /** Cultivo fijo `BLU`. */
+  cultivoID: string;
 }
 
-/** Body de `POST Insert` — la entidad sin `id` (lo genera el backend). */
-export type MaestraPrecioInsertDto = Omit<MaestraPrecio, 'id'>;
+/**
+ * Fila devuelta por `Pagination` / `Find`: campos escribibles
+ * + nombres resueltos por el backend (para mostrar en la tabla)
+ * + columnas de auditoría.
+ */
+export interface MaestraPrecio extends MaestraPrecioBase {
+  id: number;
+  // Nombres resueltos por el backend (display en la tabla).
+  via: string;
+  mercado: string;
+  consignatario: string;
+  presentacion: string;
+  calibre: string;
+  marca: string;
+  metodoCultivo: string;
+  // Auditoría.
+  creadoPor: number;
+  fechaCreacion: string;
+  actualizadoPor: number;
+  fechaActualizacion: string;
+}
 
-/** Body de `PUT Update` — la entidad completa con `id`. */
-export type MaestraPrecioUpdateDto = MaestraPrecio;
+/** Body de `POST Insert` — solo los campos escribibles (sin `id`). */
+export type MaestraPrecioInsertDto = MaestraPrecioBase;
+
+/** Body de `PUT Update` — campos escribibles con `id`. */
+export type MaestraPrecioUpdateDto = MaestraPrecioBase & { id: number };
 
 /**
  * Query de `GET Pagination`.
