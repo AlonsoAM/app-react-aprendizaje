@@ -4,10 +4,10 @@ spec_ref: mantenimiento-maestra-precios-arandanos-spec.md
 created: 2026-06-04
 status: in_progress
 total_tasks: 41
-completed_tasks: 18
-last_session: "2026-06-07 18:59"
-last_completed_task: T2.5
-next_pending_task: T3.1
+completed_tasks: 25
+last_session: "2026-06-07 19:21"
+last_completed_task: T3.7
+next_pending_task: T4.1
 sessions_count: 3
 paused_reason: ""
 ---
@@ -102,31 +102,31 @@ paused_reason: ""
   - Rollback: `git revert`
 
 ### 🪝 Bloque 3 — Stores + Hooks (Fases 2 y 6 del roadmap)
-- [ ] **T3.1**: `useAuthStore` (Zustand persist: token, refreshToken, expToken, user, menus) `🔴 P0`
+- [x] **T3.1**: `useAuthStore` (Zustand persist: token, refreshToken, expToken, user, menus) `🔴 P0`
   - Archivo: `src/stores/authStore.ts`
   - Depende de: T1.2
   - Rollback: `git revert`
-- [ ] **T3.2**: `usePeriodoStore` (Zustand persist: período activo) `🔴 P0`
+- [x] **T3.2**: `usePeriodoStore` (Zustand persist: período activo) `🔴 P0`
   - Archivo: `src/stores/periodoStore.ts`
   - Depende de: T1.4
   - Rollback: `git revert`
-- [ ] **T3.3**: Hook de refresh proactivo de token (usa `expToken`) `🟡 P1`
+- [x] **T3.3**: Hook de refresh proactivo de token (usa `expToken`) `🟡 P1`
   - Archivo: `src/hooks/useTokenRefresh.ts`
   - Depende de: T3.1, T2.2
   - Rollback: `git revert`
-- [ ] **T3.4**: Hook de idle timeout + cuenta regresiva `🟡 P1`
+- [x] **T3.4**: Hook de idle timeout + cuenta regresiva `🟡 P1`
   - Archivo: `src/hooks/useIdleTimer.ts`, `src/config/session.ts`
   - Depende de: T3.1
   - Rollback: `git revert`
-- [ ] **T3.5**: Hooks TanStack Query de período y empresa `🔴 P0`
+- [x] **T3.5**: Hooks TanStack Query de período y empresa `🔴 P0`
   - Archivo: `src/hooks/usePeriodos.ts`, `src/hooks/useEmpresas.ts`
   - Depende de: T2.3
   - Rollback: `git revert`
-- [ ] **T3.6**: Hooks TanStack Query de combos `🔴 P0`
+- [x] **T3.6**: Hooks TanStack Query de combos `🔴 P0`
   - Archivo: `src/hooks/useCombos.ts`
   - Depende de: T2.5
   - Rollback: `git revert`
-- [ ] **T3.7**: Hooks del módulo (`usePreciosPagination`, `usePrecio`, mutations insert/update/delete) `🔴 P0`
+- [x] **T3.7**: Hooks del módulo (`usePreciosPagination`, `usePrecio`, mutations insert/update/delete) `🔴 P0`
   - Archivo: `src/hooks/useMaestraPrecios.ts`
   - Depende de: T2.4
   - Rollback: `git revert`
@@ -263,3 +263,10 @@ paused_reason: ""
 | T1.5↺ | ✅ | 2026-06-07 18:54 | **Revisión de T1.5 con shape real (API test):** el row de `Pagination` trae IDs + nombres resueltos (via/mercado/consignatario/presentacion/calibre/marca/metodoCultivo) + auditoría + `cultivoID`. Refactor: `MaestraPrecioBase` (campos escribibles) → `MaestraPrecio extends Base` (+ nombres + audit + id), `InsertDto=Base`, `UpdateDto=Base&{id}`. Corrige el `Omit` previo que filtraba nombres/audit a los DTOs. Flag de T1.5 cerrado. |
 | T2.4 | ✅ | 2026-06-07 18:54 | `src/api/maestraPrecioApi.ts`: `getPagination(filter)` (mapea periodoID/empresaID→`PeriodoID`/`EmpresaID`) → `Paginacion<MaestraPrecio>`; `findById(id)`; `insert`/`update`/`remove` → `void` (UI invalida query y refresca). Base `api/MaestraPreciosArandano`. `npm run build` OK |
 | T2.5 | ✅ | 2026-06-07 18:59 | `src/api/combosApi.ts`: `getVias/getMercados/getMetodosCultivo` (globales), `getCalibres/getMarcas` (cultivoID=BLU), `getConsignatarios(empresaID)`, `getPresentaciones(empresaID)` (cropID=BLU + filtro client-side). Mapper `toComboItem` tolerante a casing (id/Id, nombre/Nombre) → `ComboItem`. Flags abiertos: casing real de combos y mecanismo de filtro de consignatarios (confirmar al cablear form). `npm run build` OK. **Bloque 2 cerrado** |
+| T3.1 | ✅ | 2026-06-07 19:06 | `src/stores/authStore.ts`: `useAuthStore` (Zustand + persist key `auth`): estado token/refreshToken/expToken/user(AuthUser subset)/menus; acciones `login`/`setSession`(refresh)/`logout`; `selectIsAuthenticated`. Cierra el desacople de T2.1: `setTokenGetter(()=>getState().token)`. `npm run build` OK |
+| T3.2 | ✅ | 2026-06-07 19:08 | `src/stores/periodoStore.ts`: `usePeriodoStore` (Zustand + persist key `periodo`): estado `periodo: PeriodoActivo\|null`, acciones `setPeriodo`/`clear`, selector `selectHasPeriodo`. Contexto global del período. `npm run build` OK |
+| T3.3 | ✅ | 2026-06-07 19:10 | `src/hooks/useTokenRefresh.ts`: programa refresh ~60s antes de `expToken` vía setTimeout; al renovar `setSession` reprograma solo (loop auto-sostenido); falla→`logout`; cleanup del timer. Montar en área autenticada. `npm run build` OK |
+| T3.4 | ✅ | 2026-06-07 19:14 | `src/config/session.ts`: idle 25min, countdown 60s, eventos de actividad. `src/hooks/useIdleTimer.ts`: estado active↔warning; actividad resetea idle (active), en warning ignora actividad pasiva (decisión por botón); countdown→`onTimeout`. Usa `isWarningRef` para no re-suscribir listeners. Devuelve `{isWarning,remainingMs,stayActive}`. Fix: `useState<number>` (countdownMs era literal `as const`). `npm run build` OK |
+| T3.5 | ✅ | 2026-06-07 19:16 | `src/hooks/usePeriodos.ts` (queryKey `['periodos']`) y `src/hooks/useEmpresas.ts` (queryKey `['empresas']`): `useQuery` sobre getPeriodos/getEmpresas con `staleTime` 1h (datos casi estáticos). `npm run build` OK |
+| T3.6 | ✅ | 2026-06-07 19:18 | `src/hooks/useCombos.ts`: `useVias/useMercados/useMetodosCultivo` (globales), `useCalibres/useMarcas` (cultivo BLU), `useConsignatarios(empresaID)`/`usePresentaciones(empresaID)` (queryKey incluye empresaID + `enabled:!!empresaID`). staleTime 1h. `npm run build` OK |
+| T3.7 | ✅ | 2026-06-07 19:21 | `src/hooks/useMaestraPrecios.ts`: `usePreciosPagination(filter)` (`enabled:!!empresaID`, `placeholderData:keepPreviousData`), `usePrecio(id)` (`enabled:!!id`), mutations `useInsertPrecio/useUpdatePrecio/useDeletePrecio` con `onSuccess`→`invalidateQueries(['maestraPrecios'])`. `npm run build` OK. **Bloque 3 cerrado** |
