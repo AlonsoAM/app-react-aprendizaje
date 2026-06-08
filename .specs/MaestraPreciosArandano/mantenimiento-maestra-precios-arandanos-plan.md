@@ -4,10 +4,10 @@ spec_ref: mantenimiento-maestra-precios-arandanos-spec.md
 created: 2026-06-04
 status: in_progress
 total_tasks: 41
-completed_tasks: 30
-last_session: "2026-06-07 19:33"
-last_completed_task: T4.5
-next_pending_task: T5.1
+completed_tasks: 39
+last_session: "2026-06-07 19:49"
+last_completed_task: T5.9
+next_pending_task: T6.1
 sessions_count: 3
 paused_reason: ""
 ---
@@ -154,39 +154,39 @@ paused_reason: ""
   - Rollback: `git revert`
 
 ### 🔐 Bloque 5 — Auth + Período + Layout (Fase 6 del roadmap)
-- [ ] **T5.1**: `LoginPage` (RHF + Zod, password Base64, guarda sesión) `🔴 P0`
+- [x] **T5.1**: `LoginPage` (RHF + Zod, password Base64, guarda sesión) `🔴 P0`
   - Archivo: `src/pages/LoginPage.tsx`
   - Depende de: T3.1, T2.2
   - Rollback: `git revert`
-- [ ] **T5.2**: `ProtectedRoute` (guard de sesión) `🔴 P0`
+- [x] **T5.2**: `ProtectedRoute` (guard de sesión) `🔴 P0`
   - Archivo: `src/components/auth/ProtectedRoute.tsx`
   - Depende de: T3.1
   - Rollback: `git revert`
-- [ ] **T5.3**: `PeriodoSelectPage` (selección post-login, 2026 default) `🔴 P0`
+- [x] **T5.3**: `PeriodoSelectPage` (selección post-login, 2026 default) `🔴 P0`
   - Archivo: `src/pages/PeriodoSelectPage.tsx`
   - Depende de: T3.2, T3.5
   - Rollback: `git revert`
-- [ ] **T5.4**: `RequirePeriodo` (guard de período activo) `🔴 P0`
+- [x] **T5.4**: `RequirePeriodo` (guard de período activo) `🔴 P0`
   - Archivo: `src/components/auth/RequirePeriodo.tsx`
   - Depende de: T3.2
   - Rollback: `git revert`
-- [ ] **T5.5**: `MenuSidebar` (menú dinámico recursivo desde `menus[]`) `🔴 P0`
+- [x] **T5.5**: `MenuSidebar` (menú dinámico recursivo desde `menus[]`) `🔴 P0`
   - Archivo: `src/components/layout/MenuSidebar.tsx`
   - Depende de: T3.1
   - Rollback: `git revert`
-- [ ] **T5.6**: `PeriodoSwitcher` (selector de período en navbar) `🔴 P0`
+- [x] **T5.6**: `PeriodoSwitcher` (selector de período en navbar) `🔴 P0`
   - Archivo: `src/components/layout/PeriodoSwitcher.tsx`
   - Depende de: T3.2, T3.5
   - Rollback: `git revert`
-- [ ] **T5.7**: `AppLayout` (navbar + sidebar + Outlet) `🔴 P0`
+- [x] **T5.7**: `AppLayout` (navbar + sidebar + Outlet) `🔴 P0`
   - Archivo: `src/components/layout/AppLayout.tsx`
   - Depende de: T5.5, T5.6
   - Rollback: `git revert`
-- [ ] **T5.8**: `SessionExpiryModal` (cuenta regresiva por inactividad) `🟡 P1`
+- [x] **T5.8**: `SessionExpiryModal` (cuenta regresiva por inactividad) `🟡 P1`
   - Archivo: `src/components/auth/SessionExpiryModal.tsx`
   - Depende de: T3.4
   - Rollback: `git revert`
-- [ ] **T5.9**: `DashboardPage` (inicio post-login) `🟡 P1`
+- [x] **T5.9**: `DashboardPage` (inicio post-login) `🟡 P1`
   - Archivo: `src/pages/DashboardPage.tsx`
   - Depende de: T5.7
   - Rollback: `git revert`
@@ -275,3 +275,12 @@ paused_reason: ""
 | T4.3 | ✅ | 2026-06-07 19:29 | `src/components/ui/ConfirmDialog.tsx`: modal controlado (open), confirm/cancel callbacks, cierra con Escape/backdrop, `loading` bloquea confirmar, `danger` estilo destructivo. role=dialog/aria-modal. `npm run build` OK |
 | T4.4 | ✅ | 2026-06-07 19:32 | `src/stores/uiStore.ts`: `useUiStore` (toasts + add/remove, id incremental por contador), helpers `toastSuccess`/`toastError` (sin hook, vía getState). `src/components/ui/Toaster.tsx`: pila fixed bottom-right, auto-dismiss 4s, estilos por tipo. `npm run build` OK |
 | T4.5 | ✅ | 2026-06-07 19:33 | `src/components/ui/TableSkeleton.tsx` (rows×cols con animate-pulse) y `src/components/ui/EmptyState.tsx` (title/message/action/icon). Estados loading/vacío del listado. `npm run build` OK. **Bloque 4 cerrado** |
+| T5.1 | ✅ | 2026-06-07 19:36 | `src/pages/LoginPage.tsx`: RHF + Zod (userName/password requeridos), submit→`login`(Base64)→`useAuthStore.login`→`navigate('/')`; error de credenciales muestra `ApiError.message` sin redirigir; `isSubmitting` bloquea botón. `npm run build` OK |
+| T5.2 | ✅ | 2026-06-07 19:38 | `src/components/auth/ProtectedRoute.tsx`: ruta-layout; sin sesión → `<Navigate to="/login" replace>`, con sesión → `<Outlet/>`. Usa `selectIsAuthenticated`. `npm run build` OK |
+| T5.3 | ✅ | 2026-06-07 19:40 | `src/pages/PeriodoSelectPage.tsx`: `usePeriodos`, default = período año 2026 (de `fechaInicio`, fallback primero); confirmar→`setPeriodo({id,descripcion})`→`navigate('/')`. Loading/error manejados. `npm run build` OK |
+| T5.4 | ✅ | 2026-06-07 19:41 | `src/components/auth/RequirePeriodo.tsx`: ruta-layout anidada bajo ProtectedRoute; sin período → `<Navigate to="/seleccionar-periodo" replace>`, con período → `<Outlet/>`. `npm run build` OK |
+| T5.5 | ✅ | 2026-06-07 19:43 | `src/components/layout/MenuSidebar.tsx`: `buildTree` arma árbol desde menus[] plano (idMenuPadre, filtra visible, ordena por orden); `MenuNodeItem` recursivo (padres colapsables, hojas NavLink); mapeo `ROUTES` por controlador (solo MaestraPreciosArandano navegable, resto deshabilitado). `npm run build` OK |
+| T5.6 | ✅ | 2026-06-07 19:44 | `src/components/layout/PeriodoSwitcher.tsx`: select de período en navbar; muestra activo (usePeriodoStore), lista usePeriodos; onChange→`setPeriodo`→módulos dependientes refrescan (periodoID en queryKey). Fallback al período activo si la lista no cargó. `npm run build` OK |
+| T5.7 | ✅ | 2026-06-07 19:46 | `src/components/layout/AppLayout.tsx`: navbar (PeriodoSwitcher + user + logout) + MenuSidebar + `<Outlet/>`; monta `useTokenRefresh()`; logout limpia auth+período y navega a /login. `npm run build` OK |
+| T5.8 | ✅ | 2026-06-07 19:48 | `src/components/auth/SessionExpiryModal.tsx`: usa `useIdleTimer`; en warning muestra cuenta regresiva mm:ss; "Seguir activo"→stayActive, "Cerrar sesión"/timeout→logout. Enchufado en AppLayout. `npm run build` OK |
+| T5.9 | ✅ | 2026-06-07 19:49 | `src/pages/DashboardPage.tsx`: saludo al usuario + período activo + atajo (Link) al módulo Maestra de Precios. `npm run build` OK. **Bloque 5 cerrado** |
