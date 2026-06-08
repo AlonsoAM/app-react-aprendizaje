@@ -4,10 +4,10 @@ spec_ref: mantenimiento-maestra-precios-arandanos-spec.md
 created: 2026-06-04
 status: in_progress
 total_tasks: 41
-completed_tasks: 25
-last_session: "2026-06-07 19:21"
-last_completed_task: T3.7
-next_pending_task: T4.1
+completed_tasks: 30
+last_session: "2026-06-07 19:33"
+last_completed_task: T4.5
+next_pending_task: T5.1
 sessions_count: 3
 paused_reason: ""
 ---
@@ -132,23 +132,23 @@ paused_reason: ""
   - Rollback: `git revert`
 
 ### 🧩 Bloque 4 — Componentes base (Fase 1 del roadmap)
-- [ ] **T4.1**: `QueryProvider` (QueryClient + provider) `🔴 P0`
+- [x] **T4.1**: `QueryProvider` (QueryClient + provider) `🔴 P0`
   - Archivo: `src/lib/queryClient.tsx`
   - Depende de: T0.3
   - Rollback: `git revert`
-- [ ] **T4.2**: `ComboField` (select tipado reutilizable) `🔴 P0`
+- [x] **T4.2**: `ComboField` (select tipado reutilizable) `🔴 P0`
   - Archivo: `src/components/ui/ComboField.tsx`
   - Depende de: T1.5
   - Rollback: `git revert`
-- [ ] **T4.3**: `ConfirmDialog` (modal de confirmación) `🔴 P0`
+- [x] **T4.3**: `ConfirmDialog` (modal de confirmación) `🔴 P0`
   - Archivo: `src/components/ui/ConfirmDialog.tsx`
   - Depende de: T0.4
   - Rollback: `git revert`
-- [ ] **T4.4**: Sistema de toasts (`useUiStore` + `Toaster`) `🟡 P1`
+- [x] **T4.4**: Sistema de toasts (`useUiStore` + `Toaster`) `🟡 P1`
   - Archivo: `src/components/ui/Toaster.tsx`, `src/stores/uiStore.ts`
   - Depende de: T0.4
   - Rollback: `git revert`
-- [ ] **T4.5**: Skeleton / Loading + Empty state reutilizables `🟡 P1`
+- [x] **T4.5**: Skeleton / Loading + Empty state reutilizables `🟡 P1`
   - Archivo: `src/components/ui/TableSkeleton.tsx`, `src/components/ui/EmptyState.tsx`
   - Depende de: T0.4
   - Rollback: `git revert`
@@ -270,3 +270,8 @@ paused_reason: ""
 | T3.5 | ✅ | 2026-06-07 19:16 | `src/hooks/usePeriodos.ts` (queryKey `['periodos']`) y `src/hooks/useEmpresas.ts` (queryKey `['empresas']`): `useQuery` sobre getPeriodos/getEmpresas con `staleTime` 1h (datos casi estáticos). `npm run build` OK |
 | T3.6 | ✅ | 2026-06-07 19:18 | `src/hooks/useCombos.ts`: `useVias/useMercados/useMetodosCultivo` (globales), `useCalibres/useMarcas` (cultivo BLU), `useConsignatarios(empresaID)`/`usePresentaciones(empresaID)` (queryKey incluye empresaID + `enabled:!!empresaID`). staleTime 1h. `npm run build` OK |
 | T3.7 | ✅ | 2026-06-07 19:21 | `src/hooks/useMaestraPrecios.ts`: `usePreciosPagination(filter)` (`enabled:!!empresaID`, `placeholderData:keepPreviousData`), `usePrecio(id)` (`enabled:!!id`), mutations `useInsertPrecio/useUpdatePrecio/useDeletePrecio` con `onSuccess`→`invalidateQueries(['maestraPrecios'])`. `npm run build` OK. **Bloque 3 cerrado** |
+| T4.1 | ✅ | 2026-06-07 19:25 | `src/lib/queryClient.tsx`: `QueryClient` (retry 1, refetchOnWindowFocus false, staleTime 30s) + `QueryProvider` wrapper. Habilita todos los hooks de query. `npm run build` OK |
+| T4.2 | ✅ | 2026-06-07 19:27 | `src/components/ui/ComboField.tsx`: select tipado con `forwardRef` (integra RHF), consume `ComboItem[]`, props label/error/loading/placeholder, estados disabled + aria-invalid. Tailwind. `npm run build` OK (CSS creció → Tailwind detecta clases) |
+| T4.3 | ✅ | 2026-06-07 19:29 | `src/components/ui/ConfirmDialog.tsx`: modal controlado (open), confirm/cancel callbacks, cierra con Escape/backdrop, `loading` bloquea confirmar, `danger` estilo destructivo. role=dialog/aria-modal. `npm run build` OK |
+| T4.4 | ✅ | 2026-06-07 19:32 | `src/stores/uiStore.ts`: `useUiStore` (toasts + add/remove, id incremental por contador), helpers `toastSuccess`/`toastError` (sin hook, vía getState). `src/components/ui/Toaster.tsx`: pila fixed bottom-right, auto-dismiss 4s, estilos por tipo. `npm run build` OK |
+| T4.5 | ✅ | 2026-06-07 19:33 | `src/components/ui/TableSkeleton.tsx` (rows×cols con animate-pulse) y `src/components/ui/EmptyState.tsx` (title/message/action/icon). Estados loading/vacío del listado. `npm run build` OK. **Bloque 4 cerrado** |
